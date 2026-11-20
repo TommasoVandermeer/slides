@@ -1,0 +1,25 @@
+/* Didascalia sotto figure e video: cosa guardare */
+.caption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Citazione breve in basso a sinistra */
+.cite {
+  position: absolute;
+  left: 3.5rem;
+  bottom: 1rem;
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+/* Segnaposto per contenuto mancante: deve sparire prima della pubblicazione */
+.todo {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border: 2px dashed #d62728;
+  color: #d62728;
+  font-weight: 600;
+}

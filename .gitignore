@@ -1,2 +1,7 @@
 node_modules/
 dist/
+private/
+.slidev/
+*-export.pdf
+*-export/
+.DS_Store
