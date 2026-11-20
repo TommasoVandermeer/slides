@@ -1,5 +1,6 @@
 {
   "permissions": {
-    "additionalDirectories": ["../PhD-thesis/"]
+    "additionalDirectories": ["../PhD-thesis/"],
+    "deny": ["Edit(//home/tom/Projects/PhD-thesis/**)"]
   }
 }
