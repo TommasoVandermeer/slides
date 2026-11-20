@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slides · Tommaso Van Der Meer</title>
+  <meta name="description" content="Talks and presentations by Tommaso Van Der Meer, PhD student at the University of Siena.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f6f7f9;
+      --border: #e4e6ea;
+      --text: #24292f;
+      --muted: #6b7280;
+      --accent: #a52a2a;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111315;
+        --surface: #1a1d21;
+        --border: #2b2f35;
+        --text: #e6e8eb;
+        --muted: #9aa1aa;
+        --accent: #e06b5f;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .wrapper { max-width: 760px; margin: 0 auto; padding: 56px 16px 40px; }
+
+    .back {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--muted); font-size: 14px;
+      transition: color .2s;
+    }
+    .back:hover, .back:focus-visible { color: var(--accent); }
+
+    header { margin: 28px 0 40px; }
+    header h1 {
+      margin: 0; font-size: 40px; font-weight: 700; letter-spacing: -0.02em;
+    }
+    header h1::after {
+      content: ""; display: block; width: 48px; height: 4px;
+      margin-top: 14px; border-radius: 2px; background: var(--accent);
+    }
+    header p { margin: 16px 0 0; color: var(--muted); max-width: 52ch; }
+
+    ul.decks { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+
+    .deck {
+      display: grid; grid-template-columns: 72px 1fr auto; align-items: center; gap: 20px;
+      padding: 18px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+    }
+    .deck:hover, .deck:focus-visible {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .07);
+      outline: none;
+    }
+
+    time { display: flex; flex-direction: column; align-items: center; line-height: 1.15; }
+    time .day { font-size: 26px; font-weight: 700; color: var(--accent); }
+    time .month {
+      font-size: 12px; color: var(--muted); text-transform: uppercase;
+      letter-spacing: .06em; white-space: nowrap;
+    }
+
+    .body { min-width: 0; }
+    .body h2 { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.35; }
+    .body .info { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+
+    .arrow { font-size: 20px; color: var(--muted); transition: color .2s, transform .2s; }
+    .deck:hover .arrow, .deck:focus-visible .arrow { color: var(--accent); transform: translateX(4px); }
+
+    .empty { color: var(--muted); font-style: italic; }
+
+    footer {
+      margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 13px;
+    }
+    footer a { text-decoration: underline; text-underline-offset: 2px; }
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 520px) {
+      .wrapper { padding-top: 32px; }
+      header h1 { font-size: 32px; }
+      .deck { grid-template-columns: 56px 1fr; gap: 14px; padding: 16px; }
+      .arrow { display: none; }
+      time .day { font-size: 22px; }
+      time .month { font-size: 11px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .deck, .arrow { transition: none; }
+      .deck:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <a class="back" href="/">&larr; Tommaso Van Der Meer</a>
+
+    <header>
+      <h1>Slides</h1>
+      <p>Talks and presentations on reinforcement learning, social navigation and human motion models.</p>
+    </header>
+
+    <ul class="decks">
+{{ decks }}
+    </ul>
+
+    <footer>
+      &copy; {{ year }} Tommaso Van Der Meer · Made with <a href="https://sli.dev" target="_blank" rel="noopener">Slidev</a>
+    </footer>
+  </div>
+</body>
+</html>

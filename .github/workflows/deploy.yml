@@ -27,12 +27,11 @@ jobs:
       - name: Build decks
         run: |
           mkdir -p dist
-          echo '<!doctype html><meta charset="utf-8"><title>Slides</title><h1>Slides</h1><ul>' > dist/index.html
           for deck in $(grep -v '^#' decks.txt); do
             (cd "$deck" && npx slidev build slides.md --base "/slides/$deck/" --out "../dist/$deck" --without-notes)
-            echo "<li><a href=\"$deck/\">$deck</a></li>" >> dist/index.html
           done
-          echo '</ul>' >> dist/index.html
+      - name: Build index page
+        run: python3 scripts/build_index.py decks.txt dist/index.html
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
