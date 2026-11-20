@@ -5,7 +5,8 @@ Per ogni deck elencato in decks.txt legge dal headmatter di `slides.md`:
 - `title`: titolo mostrato (default: nome della cartella);
 - `info`: descrizione facoltativa, di cui si usa la prima riga non vuota.
 La data viene dal nome della cartella (GG-MM-AAAA-<tema>). I deck sono
-ordinati dal più recente. Lo stile è in scripts/index.template.html.
+ordinati dal più recente e raggruppati per anno. Lo stile è in
+scripts/index.template.html.
 
 Uso:
     python3 scripts/build_index.py decks.txt dist/index.html
@@ -59,15 +60,37 @@ def render(deck: dict) -> str:
     if when:
         date_html = (f'<time datetime="{when.isoformat()}">'
                      f'<span class="day">{when.day:02d}</span>'
-                     f'<span class="month">{MONTHS[when.month - 1]} {when.year}</span>'
+                     f'<span class="month">{MONTHS[when.month - 1]}</span>'
                      f"</time>")
     else:
         date_html = '<time></time>'
     info = f'<p class="info">{html.escape(deck["info"])}</p>' if deck["info"] else ""
     href = html.escape(deck["name"], quote=True)
-    return (f'      <li><a class="deck" href="{href}/">{date_html}'
-            f'<div class="body"><h2>{html.escape(deck["title"])}</h2>{info}</div>'
-            f'<span class="arrow" aria-hidden="true">&rarr;</span></a></li>')
+    badge = '<span class="badge">Upcoming</span>'
+    arrow = ('<span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" '
+             'stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+             '<path d="M5 12h14M12 5l7 7-7 7"/></svg></span>')
+    return (f'          <li><a class="deck" href="{href}/">{date_html}'
+            f'<div class="body"><h3>{html.escape(deck["title"])}{badge}</h3>{info}</div>'
+            f'{arrow}</a></li>')
+
+
+def render_all(decks: list) -> str:
+    """Raggruppa i deck per anno (i deck senza data finiscono in fondo)."""
+    if not decks:
+        return '      <p class="empty">No talks published yet.</p>'
+    groups: dict = {}
+    for d in decks:
+        groups.setdefault(d["date"].year if d["date"] else None, []).append(d)
+    sections = []
+    for year, items in groups.items():
+        label = str(year) if year else "Other"
+        rows = "\n".join(render(d) for d in items)
+        sections.append(f'      <section class="year" aria-label="{label}">\n'
+                        f'        <h2>{label}</h2>\n'
+                        f'        <ul class="decks">\n{rows}\n        </ul>\n'
+                        f'      </section>')
+    return "\n".join(sections)
 
 
 def main() -> None:
@@ -78,8 +101,7 @@ def main() -> None:
              if l.strip() and not l.lstrip().startswith("#")]
     decks = sorted((deck_entry(n) for n in names),
                    key=lambda d: d["date"] or date.min, reverse=True)
-    items = "\n".join(render(d) for d in decks) or \
-        '      <li class="empty">No talks published yet.</li>'
+    items = render_all(decks)
     page = TEMPLATE.read_text(encoding="utf-8")
     page = page.replace("{{ decks }}", items).replace("{{ year }}", str(date.today().year))
     out.parent.mkdir(parents=True, exist_ok=True)

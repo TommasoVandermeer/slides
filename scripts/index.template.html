@@ -7,24 +7,34 @@
   <meta name="description" content="Talks and presentations by Tommaso Van Der Meer, PhD student at the University of Siena.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #ffffff;
-      --surface: #f6f7f9;
-      --border: #e4e6ea;
-      --text: #24292f;
+      --surface: #ffffff;
+      --surface-hover: #fcf8f8;
+      --border: #e7e8eb;
+      --text: #1f2328;
       --muted: #6b7280;
+      --faint: #b4b9c1;
       --accent: #a52a2a;
+      --accent-soft: rgba(165, 42, 42, .08);
+      --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 1px 3px rgba(16, 24, 40, .06);
+      --shadow-hover: 0 10px 28px -8px rgba(165, 42, 42, .22), 0 2px 6px rgba(16, 24, 40, .06);
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #111315;
-        --surface: #1a1d21;
-        --border: #2b2f35;
-        --text: #e6e8eb;
+        --bg: #0f1113;
+        --surface: #16191c;
+        --surface-hover: #1c1a1b;
+        --border: #262a2f;
+        --text: #e8eaed;
         --muted: #9aa1aa;
-        --accent: #e06b5f;
+        --faint: #4a5059;
+        --accent: #e5776b;
+        --accent-soft: rgba(229, 119, 107, .12);
+        --shadow: none;
+        --shadow-hover: 0 10px 28px -10px rgba(0, 0, 0, .6);
       }
     }
 
@@ -32,103 +42,198 @@
     html { -webkit-text-size-adjust: 100%; }
     body {
       margin: 0;
+      min-height: 100vh;
       background: var(--bg);
       color: var(--text);
       font-family: "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-size: 16px;
       line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
     }
     a { color: inherit; text-decoration: none; }
+    ::selection { background: var(--accent); color: #fff; }
 
-    .wrapper { max-width: 760px; margin: 0 auto; padding: 56px 16px 40px; }
+    .wrapper {
+      max-width: 1040px; margin: 0 auto; padding: 72px 32px 48px;
+      display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 72px;
+    }
 
-    .back {
-      display: inline-flex; align-items: center; gap: 6px;
-      color: var(--muted); font-size: 14px;
+    /* Sidebar, come nel sito principale */
+    aside { position: sticky; top: 72px; align-self: start; }
+    .avatar {
+      display: block; width: 112px; height: 112px; border-radius: 50%;
+      object-fit: cover; margin-bottom: 22px;
+      box-shadow: 0 0 0 4px var(--bg), 0 0 0 5px var(--border);
+    }
+    .name { margin: 0; font-size: 24px; font-weight: 700; line-height: 1.2; letter-spacing: -.01em; }
+    .name a:hover { color: var(--accent); }
+    .role { margin: 8px 0 0; color: var(--muted); font-size: 15px; line-height: 1.45; }
+    .links { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 10px; font-size: 14px; }
+    .links a {
+      display: inline-flex; align-items: center; gap: 10px; color: var(--muted);
       transition: color .2s;
     }
-    .back:hover, .back:focus-visible { color: var(--accent); }
+    .links a:hover, .links a:focus-visible { color: var(--accent); }
+    .links svg { width: 16px; height: 16px; flex: none; }
 
-    header { margin: 28px 0 40px; }
-    header h1 {
-      margin: 0; font-size: 40px; font-weight: 700; letter-spacing: -0.02em;
+    /* Contenuto */
+    header { margin-bottom: 44px; }
+    .eyebrow {
+      display: inline-block; margin-bottom: 10px;
+      font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--accent);
     }
-    header h1::after {
-      content: ""; display: block; width: 48px; height: 4px;
-      margin-top: 14px; border-radius: 2px; background: var(--accent);
+    header h1 { margin: 0; font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -.025em; }
+    header p { margin: 16px 0 0; color: var(--muted); font-size: 17px; max-width: 54ch; }
+    kbd {
+      display: inline-block; min-width: 1.6em; padding: 0 .4em; text-align: center;
+      font: 600 .8em/1.6 "Noto Sans", sans-serif; color: var(--text);
+      border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px; background: var(--surface);
     }
-    header p { margin: 16px 0 0; color: var(--muted); max-width: 52ch; }
 
-    ul.decks { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+    .year { margin: 0 0 40px; }
+    .year h2 {
+      display: flex; align-items: center; gap: 14px;
+      margin: 0 0 16px; font-size: 13px; font-weight: 600; letter-spacing: .12em;
+      color: var(--muted);
+    }
+    .year h2::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+    ul.decks { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
 
     .deck {
-      display: grid; grid-template-columns: 72px 1fr auto; align-items: center; gap: 20px;
-      padding: 18px 20px;
+      position: relative; overflow: hidden;
+      display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; align-items: center; gap: 22px;
+      padding: 20px 22px 20px 24px;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      transition: border-color .2s, transform .2s, box-shadow .2s;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      transition: border-color .25s, transform .25s, box-shadow .25s, background-color .25s;
+    }
+    .deck::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--accent); transform: scaleY(0); transform-origin: center;
+      transition: transform .25s;
     }
     .deck:hover, .deck:focus-visible {
-      border-color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+      background: var(--surface-hover);
       transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, .07);
+      box-shadow: var(--shadow-hover);
       outline: none;
     }
+    .deck:hover::before, .deck:focus-visible::before { transform: scaleY(1); }
+    .deck:focus-visible { box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-hover); }
 
-    time { display: flex; flex-direction: column; align-items: center; line-height: 1.15; }
-    time .day { font-size: 26px; font-weight: 700; color: var(--accent); }
+    time {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 64px; height: 64px; border-radius: 12px;
+      background: var(--accent-soft); line-height: 1.1;
+    }
+    time .day { font-size: 24px; font-weight: 700; color: var(--accent); }
     time .month {
-      font-size: 12px; color: var(--muted); text-transform: uppercase;
-      letter-spacing: .06em; white-space: nowrap;
+      margin-top: 2px; font-size: 11px; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .08em;
     }
 
     .body { min-width: 0; }
-    .body h2 { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.35; }
-    .body .info { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+    .body h3 { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.35; letter-spacing: -.005em; }
+    .body .info { margin: 4px 0 0; color: var(--muted); font-size: 14.5px; }
+    .badge {
+      display: none; margin-left: 8px; padding: 2px 8px; vertical-align: 2px;
+      border-radius: 999px; background: var(--accent); color: #fff;
+      font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    }
+    .upcoming .badge { display: inline-block; }
 
-    .arrow { font-size: 20px; color: var(--muted); transition: color .2s, transform .2s; }
-    .deck:hover .arrow, .deck:focus-visible .arrow { color: var(--accent); transform: translateX(4px); }
+    .arrow {
+      display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%;
+      color: var(--faint); border: 1px solid var(--border);
+      transition: color .25s, border-color .25s, background-color .25s, transform .25s;
+    }
+    .arrow svg { width: 16px; height: 16px; }
+    .deck:hover .arrow, .deck:focus-visible .arrow {
+      color: #fff; background: var(--accent); border-color: var(--accent); transform: translateX(3px);
+    }
 
-    .empty { color: var(--muted); font-style: italic; }
+    .empty {
+      padding: 32px; border: 1px dashed var(--border); border-radius: 14px;
+      color: var(--muted); font-style: italic; text-align: center;
+    }
 
     footer {
-      margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--border);
+      margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--border);
       color: var(--muted); font-size: 13px;
     }
-    footer a { text-decoration: underline; text-underline-offset: 2px; }
-    footer a:hover { color: var(--accent); }
+    footer a { text-decoration: underline; text-decoration-color: var(--faint); text-underline-offset: 3px; }
+    footer a:hover { color: var(--accent); text-decoration-color: currentColor; }
 
+    @media (max-width: 860px) {
+      .wrapper { grid-template-columns: minmax(0, 1fr); gap: 48px; padding: 48px 16px 36px; }
+      aside {
+        position: static;
+        display: grid; grid-template-columns: auto 1fr; column-gap: 18px; align-items: center;
+      }
+      .avatar-link { grid-row: span 2; }
+      .avatar { width: 72px; height: 72px; margin: 0; }
+      .name { font-size: 20px; }
+      .role { margin-top: 4px; font-size: 14px; }
+      .role br { display: none; }
+      .links { grid-column: 1 / -1; margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+      header { margin-bottom: 36px; }
+      header h1 { font-size: 36px; }
+    }
     @media (max-width: 520px) {
-      .wrapper { padding-top: 32px; }
       header h1 { font-size: 32px; }
-      .deck { grid-template-columns: 56px 1fr; gap: 14px; padding: 16px; }
+      header p { font-size: 16px; }
+      .deck { grid-template-columns: 54px minmax(0, 1fr); gap: 16px; padding: 16px; }
+      time { width: 54px; height: 54px; }
+      time .day { font-size: 20px; }
+      time .month { font-size: 10px; }
       .arrow { display: none; }
-      time .day { font-size: 22px; }
-      time .month { font-size: 11px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .deck, .arrow { transition: none; }
-      .deck:hover { transform: none; }
+      .deck, .deck::before, .arrow { transition: none; }
+      .deck:hover, .deck:focus-visible, .deck:hover .arrow { transform: none; }
     }
   </style>
 </head>
 <body>
   <div class="wrapper">
-    <a class="back" href="/">&larr; Tommaso Van Der Meer</a>
+    <aside>
+      <a class="avatar-link" href="/" aria-label="Home"><img class="avatar" src="/assets/img/profile.jpeg" alt="Tommaso Van Der Meer" width="112" height="112" onerror="this.remove()"></a>
+      <p class="name"><a href="/">Tommaso Van Der Meer</a></p>
+      <p class="role">PhD Student<br> @ University of Siena</p>
+      <ul class="links">
+        <li><a href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to homepage</a></li>
+        <li><a href="https://github.com/TommasoVandermeer" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>GitHub</a></li>
+      </ul>
+    </aside>
 
-    <header>
-      <h1>Slides</h1>
-      <p>Talks and presentations on reinforcement learning, social navigation and human motion models.</p>
-    </header>
+    <main>
+      <header>
+        <span class="eyebrow">Talks &amp; presentations</span>
+        <h1>Slides</h1>
+        <p>Talks on reinforcement learning, social robot navigation and human motion models. Each deck opens in the browser; press <kbd>F</kbd> for fullscreen.</p>
+      </header>
 
-    <ul class="decks">
 {{ decks }}
-    </ul>
 
-    <footer>
-      &copy; {{ year }} Tommaso Van Der Meer · Made with <a href="https://sli.dev" target="_blank" rel="noopener">Slidev</a>
-    </footer>
+      <footer>
+        &copy; {{ year }} Tommaso Van Der Meer · Made with <a href="https://sli.dev" target="_blank" rel="noopener">Slidev</a>
+      </footer>
+    </main>
   </div>
+  <script>
+    // Etichetta "Upcoming" calcolata nel browser, così resta corretta anche tra un deploy e l'altro.
+    (function () {
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      document.querySelectorAll('.deck time[datetime]').forEach(function (t) {
+        var p = t.getAttribute('datetime').split('-');
+        if (new Date(+p[0], p[1] - 1, +p[2]) >= today) t.closest('.deck').classList.add('upcoming');
+      });
+    })();
+  </script>
 </body>
 </html>
