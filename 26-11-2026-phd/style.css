@@ -1,0 +1,34 @@
+/* Colori fissi per concetto in tutto il deck (palette Okabe-Ito) */
+:root {
+  --c-problem: #555555;  /* social navigation, il problema */
+  --c-hm: #e69f00;       /* modelli di moto umano (sezione A) */
+  --c-dirsafe: #0072b2;  /* DIR-SAFE */
+  --c-jessi: #009e73;    /* JESSI */
+  --c-baseline: #d55e00; /* baseline (DWA e le altre) */
+}
+
+/* Didascalia sotto figure e video: cosa guardare */
+.caption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Citazione breve in basso a sinistra */
+.cite {
+  position: absolute;
+  left: 3.5rem;
+  bottom: 1rem;
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+/* Segnaposto per contenuto mancante: deve sparire prima della pubblicazione */
+.todo {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border: 2px dashed #d62728;
+  color: #d62728;
+  font-weight: 600;
+}
