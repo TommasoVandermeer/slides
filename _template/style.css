@@ -6,17 +6,17 @@
   opacity: 0.8;
 }
 
-/* Citazione breve: a destra nella riga del cartiglio (slide-bottom.vue), prima del numero di slide */
+/* Riferimenti: una riga sottile sopra il cartiglio, a destra, con il nome del metodo davanti
+   ("CADRL: Chen et al., ICRA 2017 · SARL: ...") */
 .cite {
   position: absolute;
-  right: 3.5rem;
-  bottom: 0;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  font-size: 0.65rem;
-  color: #444;
-  z-index: 10;
+  right: 1.5rem;
+  bottom: 2.25rem;
+  max-width: 92%;
+  text-align: right;
+  font-size: 0.62rem;
+  line-height: 1.3;
+  color: #666;
 }
 
 /* Segnaposto per contenuto mancante: deve sparire prima della pubblicazione */

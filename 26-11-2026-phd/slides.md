@@ -81,7 +81,7 @@ Transition: classical planners handle the first two well, but crowds are hard fo
 
 ---
 
-# Classical planners treat people as moving obstacles and can freeze in dense crowds
+# Classical planners can freeze in dense crowds
 
 <img src="/figures/freezing_robot.svg" class="mx-auto h-72" alt="A robot facing a crowd whose predicted motion covers every path to the goal" />
 
@@ -122,7 +122,7 @@ Transition: the best-known policies of this kind work well, but in a world that 
   <div class="card" style="--c: var(--c-dirsafe)"><h3>Few discrete actions</h3><p>A small set to choose from</p><span class="tag">removed by DIR-SAFE</span></div>
 </div>
 
-<div class="cite">Chen et al., ICRA 2017 · Everett et al., IROS 2018 · Chen et al., ICRA 2019</div>
+<div class="cite">CADRL: Chen et al., ICRA 2017 · LSTM-RL: Everett et al., IROS 2018 · SARL: Chen et al., ICRA 2019</div>
 
 <!--
 CADRL, LSTM-RL and SARL are among the first human-aware RL policies. SARL uses attention to weigh the humans in the crowd. They work well, but they make four simplifications. The robot knows the exact position and velocity of every human. There are no static obstacles. The robot can move in any direction, without kinematic constraints. And it chooses from a small, discrete set of actions.
@@ -150,19 +150,18 @@ Transition: let me first show you the models we compared.
 
 # Pedestrian models trade efficiency against collision avoidance
 
-<div class="cards" style="--n: 4; --c: var(--c-hm)">
-  <div class="card"><h3>ORCA</h3><p>Velocity-based: picks a collision-free velocity</p><span class="tag">efficiency</span></div>
-  <div class="card"><h3>SFM</h3><p>Force-based: people as particles pushed by forces</p><span class="tag">collision avoidance</span></div>
-  <div class="card"><h3>HSFM</h3><p>SFM plus body orientation: no sideways steps</p><span class="tag">more realistic motion</span></div>
-  <div class="card"><h3>Enhanced HSFM</h3><p>Turns towards the total force (ours)</p><span class="tag">mutual avoidance</span></div>
-</div>
+<SlidevVideo autoplay loop muted controls poster="/videos/human_motion_models.jpg" printPoster="/videos/human_motion_models.jpg" class="mx-auto h-[19.5rem]">
+  <source src="/videos/human_motion_models.mp4" type="video/mp4" />
+</SlidevVideo>
 
-<div class="cite">Van Der Meer et al., ACM THRI 2025</div>
+<p class="caption">Simulated with the same initial conditions and shared parameters · watch the orange person turn back</p>
+
+<div class="cite">ORCA: van den Berg et al., ISRR 2011 · SFM: Helbing et al., Nature 2000 · HSFM: Farina et al., PLOS ONE 2017</div>
 
 <!--
-We use microscopic models, which describe each pedestrian. They are fast, simple and predictable, which is what RL needs. There are two families. Velocity-based models, like ORCA, choose a collision-free velocity close to the preferred one. They are cooperative and favor efficiency. Force-based models, like the social force model, treat each pedestrian as a particle pushed by forces: attraction to the goal, repulsion from other people and from walls. They favor collision avoidance. The headed social force model, HSFM, adds the orientation of the body, so people do not slide sideways or walk backwards.
+We use microscopic models, which describe each pedestrian. They are fast, simple and predictable, which is what RL needs. There are two families. Velocity-based models, like ORCA, choose a collision-free velocity close to the preferred one. They are cooperative and favor efficiency. Force-based models, like the social force model, treat each pedestrian as a particle pushed by forces: attraction to the goal, repulsion from other people and from walls. They favor collision avoidance. The headed social force model, HSFM, adds the orientation of the body, the black mark, so people do not slide sideways or walk backwards.
 
-Our contribution here is an enhanced HSFM, which turns the pedestrian towards the total force and favors mutual avoidance.
+Here the same seven people, with the same start and the same parameters, walk to the opposite side and back with each model. Look at the orange person when it turns back. With ORCA the velocity changes at once, and the path has a sharp corner. With the SFM the person slows down and reverses on the same line. With the HSFM the body has to rotate, so the turn is a smooth curve.
 
 Transition: we then trained and tested the policies with each of these models.
 -->
@@ -181,7 +180,7 @@ Transition: we then trained and tested the policies with each of these models.
   <div class="card" style="--c: var(--c-hm)"><h3>Test</h3><p>3 testing models<br>5 crowd densities<br>100 trials each</p></div>
 </div>
 
-<div class="cite">Van Der Meer et al., ACM THRI 2025</div>
+<div class="cite">HM study: Van Der Meer et al., ACM THRI 2025 · CADRL: Chen 2017 · LSTM-RL: Everett 2018 · SARL: Chen 2019</div>
 
 <!--
 We trained CADRL, LSTM-RL and SARL with ORCA, SFM and HSFM pedestrians, in three training settings: circular crossing, parallel traffic, and a hybrid setting that mixes several scenarios. Then we tested every policy with each of the three models, at five crowd densities, with one hundred trials per setting.
@@ -199,7 +198,7 @@ Transition: here is the first result, about the model used in testing.
 
 <p class="caption">Policies grouped by the human model used in testing: the three boxes look alike in every metric</p>
 
-<div class="cite">Van Der Meer et al., ACM THRI 2025</div>
+<div class="cite">HM study: Van Der Meer et al., ACM THRI 2025</div>
 
 <!--
 Each box groups three thousand test episodes. Here the policies are grouped by the human model used in testing, and averaged over the training models. Path length, time to goal, space compliance, acceleration and jerk: the three boxes are very similar in every metric.
@@ -215,7 +214,7 @@ Transition: now let me group the same episodes by the model used in training.
 
 <p class="caption">Same episodes, grouped by training model: HSFM gives shorter paths and times, SFM the best space compliance</p>
 
-<div class="cite">Van Der Meer et al., ACM THRI 2025</div>
+<div class="cite">HM study: Van Der Meer et al., ACM THRI 2025</div>
 
 <!--
 Same episodes, grouped by the training model. Now the differences are large. Policies trained with the HSFM have shorter paths and a lower time to goal. Policies trained with the SFM have the best social metrics: higher space compliance, lower acceleration and jerk. Policies trained with ORCA are the least socially compliant, especially in dense crowds.
@@ -233,7 +232,7 @@ Transition: you can also see the difference directly in the trajectories.
 
 <p class="caption">Red circles: the robot every 3 s. Left: trained with SFM, it slows down in the center. Right: trained with HSFM</p>
 
-<div class="cite">Van Der Meer et al., ACM THRI 2025</div>
+<div class="cite">HM study: Van Der Meer et al., ACM THRI 2025</div>
 
 <!--
 Same initial conditions, same pedestrians, two policies. The robot trained with the SFM is more conservative: it slows down when it crosses the paths of the humans in the center. The robot trained with the HSFM accepts to get closer to the humans, covers more distance in the same time and reaches the goal earlier, with a smoother path.
@@ -249,7 +248,7 @@ Transition: the human model is not the only part of the simulator that shapes th
 
 <p class="caption">R0: base reward, R7: complete reward. With R7 the SFM and HSFM bars almost coincide</p>
 
-<div class="cite">Van Der Meer et al., Springer 2025</div>
+<div class="cite">Reward study: Van Der Meer et al., Springer 2025</div>
 
 <!--
 In a second study we used a differential-drive robot and changed the reward. Each reward term does what it is designed for, but it has side effects on other metrics. For example, a penalty on rotations reduces the angular acceleration but makes the paths longer.
@@ -264,14 +263,16 @@ Transition: so what should we take from these two studies?
 # The human motion model is part of the method, not a detail of the simulator
 
 <div class="cards" style="--n: 2; --c: var(--c-hm)">
-  <div class="card"><h3>Train</h3><p>with the enhanced HSFM<br>in many scenarios<br>choosing the reward together with the human model</p></div>
+  <div class="card"><h3>Train</h3><p>with the HSFM<br>in many scenarios<br>choosing the reward together with the human model</p></div>
   <div class="card"><h3>Test</h3><p>with other models too (ORCA, SFM)<br>in new scenarios, at several crowd densities<br>on both navigation and social metrics</p></div>
 </div>
+
+<div class="cite">HM study: Van Der Meer et al., ACM THRI 2025 · Reward study: Van Der Meer et al., Springer 2025</div>
 
 <!--
 This is the first message of the talk. The model used to simulate humans in training shapes the policy much more than the model used in testing. We found this in two different setups, so it is our most consistent result. The reward modulates the effect, so the two have to be chosen together.
 
-In practice: train with the enhanced HSFM in many scenarios, test with other models such as ORCA and the SFM, also in new scenarios, at several crowd densities, and always look at both navigation and social metrics.
+In practice: train with the HSFM in many scenarios, test with other models such as ORCA and the SFM, also in new scenarios, at several crowd densities, and always look at both navigation and social metrics.
 
 One more practical note: we moved from a Python simulator to social-jym, our JAX simulator. A training run went from about a day to a few hours, although the two setups are not identical. This made the next studies possible.
 
@@ -310,13 +311,13 @@ Transition: the usual way to output continuous actions does not fit this shape.
 
 # A Gaussian policy needs clipping, so the robot does not execute what it learned
 
-<SlidevVideo autoplay muted controls poster="/videos/gaussian_clipping.jpg" printPoster="/videos/gaussian_clipping.jpg" class="mx-auto h-80">
+<SlidevVideo autoplay loop muted controls poster="/videos/gaussian_clipping.jpg" printPoster="/videos/gaussian_clipping.jpg" class="mx-auto h-80">
   <source src="/videos/gaussian_clipping.mp4" type="video/mp4" />
 </SlidevVideo>
 
 <p class="caption">Illustration · Gaussian policy: the mass outside the triangle ends up on its border</p>
 
-<div class="cite">Van Der Meer et al., ICAR 2025</div>
+<div class="cite">Clipping mismatch: Chou, CMU 2017</div>
 
 <!--
 Most continuous RL policies use a Gaussian distribution. A Gaussian has unbounded support, so some of its samples fall outside the triangle, and they have to be clipped onto the border. Look at the density: here almost half of the probability mass is outside. Clipping does not remove it, it piles it onto the edges and into the corner. So the actions the robot executes do not follow the distribution the policy is optimizing, and this mismatch makes learning worse.
@@ -328,13 +329,13 @@ Transition: we need a distribution that cannot leave the triangle.
 
 # A Dirichlet policy samples only inside the triangle, so no clipping is needed
 
-<SlidevVideo autoplay muted controls poster="/videos/dirichlet_mapping.jpg" printPoster="/videos/dirichlet_mapping.jpg" class="mx-auto h-80">
+<SlidevVideo autoplay loop muted controls poster="/videos/dirichlet_mapping.jpg" printPoster="/videos/dirichlet_mapping.jpg" class="mx-auto h-80">
   <source src="/videos/dirichlet_mapping.mp4" type="video/mp4" />
 </SlidevVideo>
 
 <p class="caption">Illustration · Dirichlet policy: a = V z, every sample and all the density inside the triangle</p>
 
-<div class="cite">Van Der Meer et al., ICAR 2025</div>
+<div class="cite">DIR-SAFE: Van Der Meer et al., ICAR 2025 · Dirichlet policies: Ma et al., RA-L 2024</div>
 
 <!--
 A Dirichlet distribution lives on the simplex: three non-negative weights that sum to one. We use them as the weights of a convex combination of the three vertices of the triangle, a equals V z. So every sample is a feasible action by construction, and all the density stays inside the triangle, with nothing on the border. The policy outputs the concentration parameters alpha, which decide where the actions are and how spread out they are. At deployment we use the mean action. And if the triangle gets smaller, the same output still works.
@@ -346,13 +347,13 @@ Transition: and once the actions live in a triangle, we can also make that trian
 
 # Shrinking the triangle near obstacles keeps every sampled action within the safety bounds
 
-<SlidevVideo autoplay muted controls poster="/videos/action_space_bounding.jpg" printPoster="/videos/action_space_bounding.jpg" class="mx-auto h-80">
+<SlidevVideo autoplay loop muted controls poster="/videos/action_space_bounding.jpg" printPoster="/videos/action_space_bounding.jpg" class="mx-auto h-80">
   <source src="/videos/action_space_bounding.mp4" type="video/mp4" />
 </SlidevVideo>
 
 <p class="caption">Red: every action and where it can take the robot · Green: what is left after the two stages</p>
 
-<div class="cite">Van Der Meer et al., ICAR 2025</div>
+<div class="cite">DIR-SAFE: Van Der Meer et al., ICAR 2025</div>
 
 <!--
 Let me show it step by step. On the right is the triangle of actions, on the left the robot and a wall. Each action in the triangle moves the robot somewhere in the next step: together, these positions form the red region, and part of it crosses the wall.
@@ -382,7 +383,7 @@ Transition: does this work in practice?
 
 <p class="caption">Waypoints from A* · 30 people · a map never seen in training · 2×</p>
 
-<div class="cite">Van Der Meer et al., ICAR 2025</div>
+<div class="cite">DIR-SAFE: Van Der Meer et al., ICAR 2025 · DWA: Fox et al., IEEE RAM 1997</div>
 
 <!--
 DIR-SAFE is trained in simulation with SARL as its starting point, now as an actor-critic. In a first test against the dynamic window approach, over nine hundred episodes per crowd density, we observed no collisions, a slightly higher success rate and a much better space compliance.
@@ -418,7 +419,7 @@ Transition: this is JESSI.
 
 <p class="caption">Left: scans and estimated humans · Right: action space after bounding · 2×</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
 
 <!--
 JESSI takes a short stack of LiDAR scans. A perception module estimates where the humans are and how they move. An actor-critic uses these estimates to choose the action. Everything is one network, and it is differentiable end to end.
@@ -436,7 +437,7 @@ Transition: let me open the two modules.
 
 <p class="caption mt-6">X(k): stack of LiDAR scans · H(k): estimated humans, with covariances · O(k): latest raw scan</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
 
 <!--
 The perception module looks at the stack of scans and outputs, for each human, a position and a velocity with their covariances, and a confidence score. This layer is readable: you can look at what the robot believes about the people around it. This makes the policy partly interpretable.
@@ -452,11 +453,16 @@ Transition: the safety part comes from DIR-SAFE.
 
 # The same bounding now runs directly on the LiDAR point cloud
 
-<img src="/figures/action_space_bounding_summary.png" class="mx-auto h-80" alt="Action space bounding computed on the LiDAR points" />
+<div class="flex justify-center items-center gap-6">
+  <img src="/figures/action_space_bounding_summary.png" class="h-[22.5rem]" alt="Action space bounding computed on the LiDAR points" />
+  <div class="caption text-left w-52 leading-relaxed">
+    Blue crosses: LiDAR points<br><br>
+    <b style="color: #d62728">Red</b>: displacements and action space before bounding<br><br>
+    <b style="color: #2ca02c">Green</b>: after bounding
+  </div>
+</div>
 
-<p class="caption">Blue crosses: LiDAR points. Red: unbounded; green: bounded displacements and action space</p>
-
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
 
 <!--
 In DIR-SAFE the bounding used a map of the obstacles. In JESSI it uses the LiDAR points directly. Same idea: we look at the positions the robot could reach in the next step, and we shrink the triangle when LiDAR points fall inside them. The Dirichlet output stays the same, so every action is feasible and stays within the bounds.
@@ -468,11 +474,11 @@ Transition: we then compared JESSI with many baselines, in a fair setting.
 
 # Every method gets the same LiDAR, and human-aware baselines get JESSI's estimates
 
-<img src="/figures/scenarios.png" class="mx-auto h-64" alt="The navigation scenarios used in the benchmark" />
+<img src="/figures/scenarios.png" class="mx-auto h-[19.5rem]" alt="The navigation scenarios used in the benchmark" />
 
 <p class="caption">Model-based: DWA, MPPI, DRA-MPPI · Human-aware: CADRL, SARL, SARL*, DIR-SAFE · End-to-end: V-E2E, BV-E2E</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026 · DWA: Fox 1997 · MPPI: Williams 2016 · DRA-MPPI: Trevisan 2025 · CADRL: Chen 2017 · SARL: Chen 2019 · SARL*: Li 2019 · V-E2E: after Pfeiffer 2017</div>
 
 <!--
 Three setups, twelve hundred episodes each, with one to ten humans and one to five obstacles. Setup 1 uses the training scenarios with new initial conditions. Setup 2 uses scenarios never seen in training. Setup 3 uses circular obstacles that look like people standing still.
@@ -486,11 +492,11 @@ Transition: here is the success rate.
 
 # JESSI has the highest success rate in unseen layouts, and is among the best in known ones
 
-<img src="/figures/benchmark_sr.svg" class="mx-auto h-84" alt="Success rate of JESSI and the baselines in known and unseen layouts" />
+<img src="/figures/benchmark_sr.svg" class="mx-auto h-[19.8rem]" alt="Success rate of JESSI and the baselines in known and unseen layouts" />
 
 <p class="caption">JESSI: multi-task training. Mean and 95% confidence interval over 10 seeds; model-based planners have no interval</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
 
 <!--
 In the scenarios seen in training, the three JESSI variants and the bounded end-to-end baseline have the highest success rate. In the unseen scenarios of Setup 2, JESSI trained with the multi-task paradigm reaches 89.6 percent. DIR-SAFE, with JESSI's perception, is in the same range. SARL-star reaches 82.7, the bounded end-to-end policy 78.6, and the model-based planners at most 77.7. The space compliance of JESSI is comparable to that of the human-aware policies.
@@ -508,7 +514,7 @@ Transition: which part of JESSI makes the difference on obstacles?
 
 <p class="caption">Unseen layouts (Setup 2). Green: with Dirichlet actions and bounding · Red: without</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
 
 <!--
 This is the clearest evidence for the second message. If we retrain JESSI without the bounding, collisions with obstacles in the unseen scenarios go from 3.3 to 40.3 percent. And if we add the Dirichlet output and the bounding to a plain end-to-end policy, its collisions go from 42.5 to 5.7 percent.
@@ -523,15 +529,15 @@ Transition: now, the real robot.
 # Zero-shot on a TurtleBot4, JESSI completes every run and moves more smoothly than DWA
 
 <div class="flex justify-center items-center gap-8 mt-2">
-<SlidevVideo autoplay loop muted controls poster="/videos/turtlebot_corridor.jpg" printPoster="/videos/turtlebot_corridor.jpg" class="h-84">
+<SlidevVideo autoplay loop muted controls poster="/videos/turtlebot_corridor.jpg" printPoster="/videos/turtlebot_corridor.jpg" class="h-80">
   <source src="/videos/turtlebot_corridor.mp4" type="video/mp4" />
 </SlidevVideo>
-<img src="/figures/campaign_metrics.png" class="h-84" alt="Time to goal, jerk and space compliance of DWA and JESSI on the real robot" />
+<img src="/figures/campaign_metrics.png" class="h-80" alt="Time to goal, jerk and space compliance of DWA and JESSI on the real robot" />
 </div>
 
 <p class="caption">10 runs each, 5 people walking towards the robot · 12.8 ms per action on the Raspberry Pi · video 2×</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026 · DWA: Fox et al., IEEE RAM 1997</div>
 
 <!--
 We deployed JESSI on a TurtleBot4 without any retraining. The robot crosses a corridor to a goal ten meters ahead, while five people walk in the opposite direction. Ten runs for JESSI and ten for DWA.
@@ -546,7 +552,7 @@ Transition: the same network also works with other sensors.
 # The same network works with other sensors, down to a depth camera on a Loomo
 
 <div class="flex justify-center items-center gap-10 mt-2">
-<SlidevVideo autoplay loop muted controls poster="/videos/loomo.jpg" printPoster="/videos/loomo.jpg" class="h-72">
+<SlidevVideo autoplay loop muted controls poster="/videos/loomo.jpg" printPoster="/videos/loomo.jpg" class="h-[16.5rem]">
   <source src="/videos/loomo.mp4" type="video/mp4" />
 </SlidevVideo>
 <div class="cards" style="--n: 1; --c: var(--c-jessi); width: 24rem; margin-top: 0; gap: 0.6rem">
@@ -558,7 +564,7 @@ Transition: the same network also works with other sensors.
 
 <p class="caption">Loomo: depth image converted into a 2D scan · qualitative test · 2×</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
 
 <!--
 JESSI was trained with one hundred beams. Without retraining, it keeps its performance from fifty to five hundred beams, and with a shorter or longer history of scans. It degrades with only twenty beams, where thin obstacles fall between beams, and with a ninety-degree field of view.
@@ -575,7 +581,7 @@ Transition: before closing, what is still missing.
 # Safety is promoted, not guaranteed, and decisions still look only one step ahead
 
 <div class="cards">
-  <div class="card"><h3>Safety is promoted</h3><p>Collisions remain possible behind the robot, with noisy or sparse scans</p></div>
+  <div class="card"><h3>Safety is promoted</h3><p>Collisions remain possible with humans, and with obstacles with noisy or sparse scans</p></div>
   <div class="card"><h3>Simulated humans</h3><p>Disks driven by one model, not validated on real data</p></div>
   <div class="card"><h3>One-step decisions</h3><p>No prediction of where people will be</p></div>
 </div>
@@ -656,7 +662,7 @@ Definitions from Chapter 3.5 of the thesis.
 
 <p class="caption mt-6">The human driving block computes the input u; the dynamics update the state x</p>
 
-<div class="cite">Van Der Meer et al., ACM THRI 2025</div>
+<div class="cite">HM study: Van Der Meer et al., ACM THRI 2025</div>
 
 <!--
 The two families differ only in the state variables.
@@ -670,7 +676,7 @@ The two families differ only in the state variables.
 
 <p class="caption">Ratios to the performance with the training model, circular crossing</p>
 
-<div class="cite">Van Der Meer et al., ACM THRI 2025</div>
+<div class="cite">HM study: Van Der Meer et al., ACM THRI 2025</div>
 
 <!--
 Space compliance and acceleration, normalized by the performance with the training model.
@@ -691,7 +697,7 @@ $$
 | $\Rtime = -1$ | penalty at every step |
 | $\Rrot = -\lvert\romega\rvert$ if $\lvert\romega\rvert > \omegathr$ | penalty on fast rotations |
 
-<div class="cite">Van Der Meer et al., Springer 2025</div>
+<div class="cite">Reward study: Van Der Meer et al., Springer 2025 · Progress: Fan et al., IJRR 2020 · Time: Pérez-D'Arpino et al., ICRA 2021 · Rotation: Xie and Dames, T-RO 2023</div>
 
 <!--
 Base reward, progress to goal, time penalty, rotation penalty.
@@ -705,7 +711,7 @@ Base reward, progress to goal, time penalty, rotation penalty.
 
 <p class="caption mt-6">Imitation learning first, then PPO. Paradigms: PO, MD, MT (multi-task)</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026 · PPO: Schulman et al., 2017</div>
 
 <!--
 Training pipeline and the three paradigms.
@@ -734,7 +740,7 @@ Training pipeline and the three paradigms.
 
 <p class="caption">Known layouts. Mean ± 95% CI over 10 seeds</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026 · DWA: Fox 1997 · MPPI: Williams 2016 · DRA-MPPI: Trevisan 2025 · CADRL: Chen 2017 · SARL: Chen 2019 · SARL*: Li 2019 · V-E2E: after Pfeiffer 2017</div>
 
 <!--
 All policies and metrics.
@@ -763,7 +769,7 @@ All policies and metrics.
 
 <p class="caption">Unseen layouts. Mean ± 95% CI over 10 seeds</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026 · DWA: Fox 1997 · MPPI: Williams 2016 · DRA-MPPI: Trevisan 2025 · CADRL: Chen 2017 · SARL: Chen 2019 · SARL*: Li 2019 · V-E2E: after Pfeiffer 2017</div>
 
 <!--
 All policies and metrics in the unseen scenarios.
@@ -794,7 +800,7 @@ All policies and metrics in the unseen scenarios.
 
 <p class="caption">Setup 3: obstacles that look like people standing still</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026 · DWA: Fox 1997 · MPPI: Williams 2016 · DRA-MPPI: Trevisan 2025 · CADRL: Chen 2017 · SARL: Chen 2019 · SARL*: Li 2019 · V-E2E: after Pfeiffer 2017</div>
 
 <!--
 Why a geometric channel independent of the perception matters.
@@ -822,7 +828,7 @@ Why a geometric channel independent of the perception matters.
 
 <p class="caption">JESSI-MT without retraining. First row: training configuration. 1, 2: Setup 1, Setup 2</p>
 
-<div class="cite">Van Der Meer et al., IROS 2026</div>
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
 
 <!--
 Number of beams, number of scans and field of view.
@@ -836,7 +842,7 @@ Number of beams, number of scans and field of view.
 
 <p class="caption mt-4">Blue: DIR-SAFE · Red: DWA · 900 episodes per crowd density, map of obstacles and humans known</p>
 
-<div class="cite">Van Der Meer et al., ICAR 2025</div>
+<div class="cite">DIR-SAFE: Van Der Meer et al., ICAR 2025 · DWA: Fox et al., IEEE RAM 1997</div>
 
 <!--
 Nine hundred episodes per density, no collisions.
@@ -863,7 +869,7 @@ Nine hundred episodes per density, no collisions.
   </template>
 </v-switch>
 
-<div class="cite">Van Der Meer et al., ICAR 2025</div>
+<div class="cite">DIR-SAFE: Van Der Meer et al., ICAR 2025</div>
 
 <!--
 The static figures of the action space bounding, with the same geometry as the video. Click to see the result.
@@ -877,7 +883,7 @@ The static figures of the action space bounding, with the same geometry as the v
 
 <p class="caption">Illustration. Orange: samples outside the triangle, moved to its border by clipping</p>
 
-<div class="cite">Van Der Meer et al., ICAR 2025</div>
+<div class="cite">Clipping mismatch: Chou, CMU 2017 · Dirichlet policies: Ma et al., RA-L 2024</div>
 
 <!--
 Static version of the two videos on the Gaussian and the Dirichlet policy.

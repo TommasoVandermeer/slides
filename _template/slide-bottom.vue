@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Cartiglio in fondo a ogni slide (tranne la copertina): logo, autore, evento e data, numero di slide.
-// La citazione della slide (.cite, in style.css) si appoggia a destra nella stessa riga.
+// I riferimenti della slide (.cite, in style.css) stanno in una riga sottile subito sopra.
 // Autore ed evento vengono dall'headmatter (author, prima riga di info), così restano coerenti.
 import { computed } from 'vue'
 import { useSlideContext } from '@slidev/client'

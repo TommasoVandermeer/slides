@@ -38,11 +38,11 @@ Fonti: capitoli della tesi in `../PhD-thesis/tex/chapters/`, figure in `../PhD-t
 | 2 | Apertura | Robots now share corridors with people, and they must move among them naturally | Video: robot reale nel corridoio, dalla parte finale di `video_demonstration.mp4`. L'autore la giudica poco spettacolare: si prova così e si valuta se cambiare apertura | 1 |
 | 3 | Apertura | This talk follows one policy from an idealized simulator to a real corridor | Mappa (diagramma): Problem → A. Simulating humans → DIR-SAFE → B. JESSI → real robot | 1 |
 | 4 | Problema | A social robot must reach its goal, avoid collisions and respect personal space | Diagramma dei tre obiettivi, ciascuno con la sua metrica: SR, TtG, SC (Cap. 3.5) | 1.5 |
-| 5 | Problema | Classical planners treat people as moving obstacles and can freeze in dense crowds | Diagramma del freezing robot (Cap. 1.1, Cap. 8.1) (*) | 1 |
+| 5 | Problema | Classical planners can freeze in dense crowds | Diagramma del freezing robot (Cap. 1.1, Cap. 8.1) (*) | 1 |
 | 6 | Problema | Reinforcement learning learns the interaction from experience, but only in simulation | Diagramma robot-simulatore-policy (`ch5/robotmodel3.pdf`, `fig:simulation_flow`) (*) | 1.5 |
 | 7 | Problema | Human-aware RL policies work well, but in an idealized world | Le quattro semplificazioni: stato esatto degli umani, niente ostacoli statici, niente vincoli cinematici, azioni discrete (Cap. 1, Cap. 8.2). Ognuna verrà ripresa da una sezione | 1.5 |
 | 8 | A | Does the way we simulate humans change the robot we train? | Mappa con la sezione A evidenziata | 0.5 |
-| 9 | A | Pedestrian models trade efficiency against collision avoidance | ORCA (velocity-based), SFM e HSFM (force-based), con l'HSFM enhanced come nostro contributo (`ch4/hsfm.pdf`, Cap. 4) | 1.5 |
+| 9 | A | Pedestrian models trade efficiency against collision avoidance | Video Manim `human_motion_models.mp4`: ORCA, SFM e HSFM sullo stesso circular crossing con andata e ritorno, simulati con JORCA, JSFM, JHSFM (`animations/hmm_simulate.py`); zoom sulla svolta di 180° | 1.5 |
 | 10 | A | We crossed three policies with three training models and three testing models | Diagramma del disegno sperimentale: CADRL, LSTM-RL, SARL; ORCA, SFM, HSFM in training e in test; scenari CC, PT, HS; 5 densità, 100 trial (Cap. 5.2) | 1.5 |
 | 11 | A | The human model used for testing barely changes the results | Riga superiore di `ch5/cross_train_and_test_env.pdf` (*) | 1 |
 | 12 | A | The human model used for training changes them a lot | Riga inferiore della stessa figura: HSFM path length e TtG più bassi, SFM metriche sociali migliori (*) | 1.5 |

@@ -1,13 +1,14 @@
 <script setup lang="ts">
 // Mappa ricorrente del talk: il percorso dal mondo idealizzato al robot reale.
 // `current`: 0 = nessuna tappa evidenziata, 1-4 = tappa corrente.
+// `venue`: unico punto del deck dove compaiono le sedi dei lavori dell'autore (scelta dell'autore).
 const props = withDefaults(defineProps<{ current?: number }>(), { current: 0 })
 
 const stops = [
-  { n: 1, title: 'Social navigation', sub: 'the problem', color: 'var(--c-problem)' },
-  { n: 2, title: 'Simulating humans', sub: 'idealized world', color: 'var(--c-hm)' },
-  { n: 3, title: 'DIR-SAFE', sub: '+ kinematics, obstacles', color: 'var(--c-dirsafe)' },
-  { n: 4, title: 'JESSI', sub: '+ 2D LiDAR only, real robot', color: 'var(--c-jessi)' },
+  { n: 1, title: 'Social navigation', sub: 'the problem', venue: '', color: 'var(--c-problem)' },
+  { n: 2, title: 'Simulating humans', sub: 'idealized world', venue: 'ACM THRI 2025 · Springer 2025', color: 'var(--c-hm)' },
+  { n: 3, title: 'DIR-SAFE', sub: '+ kinematics, obstacles', venue: 'ICAR 2025', color: 'var(--c-dirsafe)' },
+  { n: 4, title: 'JESSI', sub: '+ 2D LiDAR only, real robot', venue: 'IROS 2026', color: 'var(--c-jessi)' },
 ]
 </script>
 
@@ -21,6 +22,7 @@ const stops = [
       >
         <div class="title">{{ s.title }}</div>
         <div class="sub">{{ s.sub }}</div>
+        <div v-if="s.venue" class="venue">{{ s.venue }}</div>
       </div>
       <div v-if="i < stops.length - 1" class="arrow" aria-hidden="true">&rarr;</div>
     </template>
@@ -59,6 +61,12 @@ const stops = [
   margin-top: 0.3rem;
   font-size: 0.85rem;
   opacity: 0.85;
+}
+.venue {
+  margin-top: 0.45rem;
+  font-size: 0.75rem;
+  font-style: italic;
+  opacity: 0.7;
 }
 .arrow {
   align-self: center;

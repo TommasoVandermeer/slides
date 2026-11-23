@@ -16,5 +16,5 @@
   - paper in `../PhD-thesis/sources/`: THRI (`THRI_Comparative/`), RS (`Springer_Reward_Shaping/`), DS (`ICAR25_DIR_SAFE/`), JC (`IROS26_JESSI/`), JJ (la cartella della versione journal di JESSI);
   - video: `~/Videos/Research/` (`icar25_astar_local_planner_2.mp4`, `icar25_dirsafe_parallel_traffic.mp4`, `video_demonstration.mp4`).
 - **Vincoli:**
-  - JJ (versione journal di JESSI): dati, figure e risultati si possono usare, ma non va detto niente sulla sua pubblicazione (né sede, né stato), né nelle slide, né nelle note del relatore, né nei file di `notes/` (la repo è pubblica). Nelle slide JESSI si cita solo come JC ("Van Der Meer et al., IROS 2026"), anche per i risultati presi da JJ.
+  - JJ (versione journal di JESSI): dati, figure e risultati si possono usare, ma non va detto niente sulla sua pubblicazione (né sede, né stato), né nelle slide, né nelle note del relatore, né nei file di `notes/` (la repo è pubblica). I lavori dell'autore si citano nelle slide che presentano un suo metodo o risultato ("JESSI: Van Der Meer et al., IROS 2026", anche per i risultati presi da JJ), e le sedi compaiono anche sotto le tappe della mappa ricorrente.
   - Safety: "promote safety", mai "guarantee" (messaggio 2).

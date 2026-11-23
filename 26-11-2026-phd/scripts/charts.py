@@ -59,7 +59,7 @@ def sr_chart():
         if lbl.get_text() in COLOR:
             lbl.set_fontweight("bold")
     fig.tight_layout()
-    fig.savefig(OUT / "benchmark_sr.svg", transparent=True)
+    fig.savefig(OUT / "benchmark_sr.svg", transparent=True, bbox_inches="tight", pad_inches=0.05)
 
 
 def bounding_chart():
