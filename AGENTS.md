@@ -15,7 +15,10 @@ https://tommasovandermeer.github.io/slides/
   - `notes/brief.md`: pubblico, durata, messaggi (lo decide l'autore);
   - `notes/storyline.md`: scaletta approvata dall'autore;
   - `public/figures/`, `public/videos/`: asset, referenziati con percorso assoluto (`/figures/x.svg`);
-  - `setup/katex.ts`: macro LaTeX; `style.css`: stili globali; `components/`: componenti Vue.
+  - `setup/katex.ts`: macro LaTeX; `style.css`: stili globali; `components/`: componenti Vue;
+  - `slide-bottom.vue`: cartiglio in fondo a ogni slide (logo, autore e `info` dall'headmatter, numero di slide); loghi in `public/logos/`.
+- `<deck>/animations/`: scene Manim del deck; stile comune (colori, sfondo, font) in `scripts/manim_style.py`. I video si generano in locale e si committano come mp4 in `public/videos/`: il deploy non usa Manim.
+- `requirements-manim.txt`: Manim Community con versione fissata; il virtualenv `.venv-manim/` è ignorato da git.
 - `decks.txt`: elenco dei deck pubblicati. Pubblicare è una decisione dell'autore: non modificare questo file senza richiesta esplicita.
 - `scripts/timing.py`: stima della durata dalle note del relatore.
 - `.github/workflows/deploy.yml`: build e deploy su GitHub Pages a ogni push su `main`.
@@ -39,6 +42,9 @@ python3 -m http.server -d dist/preview 8080     # http://localhost:8080/slides/<
 
 # durata stimata dalle note del relatore
 python3 scripts/timing.py <deck>/slides.md --target <minuti>
+
+# video Manim (una tantum: python3 -m venv .venv-manim && .venv-manim/bin/pip install -r requirements-manim.txt)
+.venv-manim/bin/manim -qh --fps 30 <deck>/animations/<file>.py <Scena> --media_dir /tmp/manim
 ```
 
 Se l'export dice che manca il browser: `npx playwright install chromium`.

@@ -10,6 +10,8 @@ transition: fade
 layout: cover
 ---
 
+<img src="/logos/unisi_oriz_col.png" alt="Università di Siena" class="absolute top-8 left-14 h-16" />
+
 # Talk title in sentence case
 
 Tommaso Van Der Meer · University of Siena

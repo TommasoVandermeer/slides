@@ -1,7 +1,7 @@
 # Storyline
 
 Stato: approvata (20/11/2026)  <!-- diventa "approvata" solo con l'ok dell'autore -->
-Durata del talk: 38.5 min (slot di 45 min + domande; obiettivo 35-40)
+Durata del talk: 39.5 min (slot di 45 min + domande; obiettivo 35-40)
 
 ## Approfondimenti proposti
 
@@ -24,7 +24,7 @@ Alternativa possibile: approfondire DIR-SAFE (bounding con la sua derivazione) a
 | Apertura | Perché ci interessa e dove andiamo? | Un robot deve muoversi tra le persone; il talk segue il percorso da un simulatore idealizzato a un robot reale | 2.5 |
 | Il problema | Cos'è la social navigation e perché il RL? | Il RL impara l'interazione, ma in simulazione e in un mondo idealizzato | 6 |
 | A. Simulare gli umani | Il modo in cui simuliamo gli umani cambia il robot che addestriamo? | Messaggio 1: il modello di moto umano fa parte del metodo | 10 |
-| DIR-SAFE (episodio) | Si può costruire la safety dentro le azioni? | Messaggio 2: ogni azione campionabile resta nei limiti di sicurezza (safety promossa, non garantita) | 5 |
+| DIR-SAFE (episodio) | Si può costruire la safety dentro le azioni? | Messaggio 2: ogni azione campionabile resta nei limiti di sicurezza (safety promossa, non garantita) | 6 |
 | B. JESSI | Funziona tutto partendo solo da un LiDAR 2D? | Messaggio 3: JESSI mette insieme i pezzi e gira su un robot reale | 12.5 |
 | Chiusura | Cosa resta aperto e cosa ricordare? | Limiti, linea futura, i tre messaggi | 2.5 |
 
@@ -51,22 +51,23 @@ Fonti: capitoli della tesi in `../PhD-thesis/tex/chapters/`, figure in `../PhD-t
 | 15 | A | The human motion model is part of the method, not a detail of the simulator | Indicazioni pratiche del Cap. 7.2: training con HSFM su più scenari, test con ORCA e SFM, più densità, metriche di navigazione e sociali | 1 |
 | 16 | DIR-SAFE | Can safety be built into the actions themselves? | Mappa con DIR-SAFE evidenziato | 0.5 |
 | 17 | DIR-SAFE | A differential-drive robot can only choose velocities inside a triangle | Triangolo delle velocità ammissibili (`ch3/action_space.pdf`) | 1 |
-| 18 | DIR-SAFE | A Dirichlet policy samples only inside the triangle, so no clipping is needed | Diagramma: gaussiana con clipping contro Dirichlet sul triangolo (Cap. 2.3, Cap. 9.1) | 1 |
-| 19 | DIR-SAFE | Shrinking the triangle near obstacles keeps every sampled action within the safety bounds | Bounding in due passi (`ch9/action_space_bounding_1/2.pdf`) (*); in nota: approssimazione conservativa, safety promossa e non garantita | 1.5 |
-| 20 | DIR-SAFE | Without retuning, DIR-SAFE crosses a large crowded map more often than DWA | Video `icar25_astar_local_planner_2.mp4`; SR 88% contro 82% con 30 umani; DWA tarato a mano (Cap. 9.4) | 1 |
-| 21 | B | Can the robot do all this from a 2D LiDAR alone? | Mappa con la sezione B evidenziata | 0.5 |
-| 22 | B | JESSI maps raw LiDAR scans to safe, social actions in one differentiable network | Video: spiegazione di JESSI in simulazione dall'inizio di `video_demonstration.mp4` (traiettoria, point cloud, umani stimati, spazio d'azione); teaser (`ch10/teaser.pdf`) come poster | 1.5 |
-| 23 | B | Perception estimates each human with its uncertainty, and the policy also sees the raw scan | Architettura e modulo di percezione (`ch10/journal_jessi_architecture.pdf`, `journal_jessi_perception.pdf`) (*) | 2 |
-| 24 | B | The same bounding now runs directly on the LiDAR point cloud | `ch10/action_space_bounding_summary.pdf` (*) | 1 |
-| 25 | B | Every method gets the same LiDAR, and human-aware baselines get JESSI's estimates | Scenari e setup del benchmark (`ch3/scenarios.pdf`); baseline model-based, human-aware, E2E (Cap. 10.4) | 1 |
-| 26 | B | JESSI has the highest success rate, with the largest margin in unseen layouts | Grafico a barre dell'SR per Setup 1 e 2 con IC al 95% su 10 seed, dalla tabella `tab:jessi_benchmark` (da costruire) | 2 |
-| 27 | B | Removing the bounding raises obstacle collisions from 3% to 40% | Barre CR-O: JESSI-MT 3.3% contro JESSI-A1 40.3% (Setup 2); V-E2E 42.5% contro BV-E2E 5.7%; in nota il costo: più timeout | 1.5 |
-| 28 | B | Zero-shot on a TurtleBot4, JESSI completes every run and moves more smoothly than DWA | Video del robot reale + `ch10/campaign_metrics.pdf` (SC più alta, jerk più bassi, TtG più alto di DWA); 12.79 ms sul Raspberry Pi | 2 |
-| 29 | B | The same network works with other sensors, down to a depth camera on a Loomo | Sintesi della tabella del sensor agnosticism (da 50 a 500 raggi senza riaddestramento; degrada con 20 raggi e FoV di 90°) + foto Loomo (`ch10/loomo_real_world_test.jpg`) | 1 |
-| 30 | Chiusura | Safety is promoted, not guaranteed, and decisions still look only one step ahead | Limiti (Cap. 11, 12) e linea futura: predizione delle traiettorie umane e RL model-based | 1.25 |
-| 31 | Chiusura | Three things to remember | I tre messaggi del brief, con le icone delle tre sezioni. Resta proiettata durante le domande | 1.25 |
+| 18 | DIR-SAFE | A Gaussian policy needs clipping, so the robot does not execute what it learned | Video Manim `gaussian_clipping.mp4`: campioni e clipping, poi PDF in 3D prima e dopo il clipping (massa esterna sul bordo); illustrazione | 1 |
+| 19 | DIR-SAFE | A Dirichlet policy samples only inside the triangle, so no clipping is needed | Video Manim `dirichlet_mapping.mp4`: simplesso, a = V z, PDF della Dirichlet sul triangolo in 3D, alpha, triangolo ristretto; illustrazione (Cap. 2.3, Cap. 9.1) | 1 |
+| 20 | DIR-SAFE | Shrinking the triangle near obstacles keeps every sampled action within the safety bounds | Video Manim `action_space_bounding.mp4` (inviluppo, box, fasi 1 e 2, box ristretto); figure statiche in backup; in nota: approssimazione conservativa, safety promossa e non garantita | 1.5 |
+| 21 | DIR-SAFE | Without retuning, DIR-SAFE crosses a large crowded map more often than DWA | Video `icar25_astar_local_planner_2.mp4`; SR 88% contro 82% con 30 umani; DWA tarato a mano (Cap. 9.4) | 1 |
+| 22 | B | Can the robot do all this from a 2D LiDAR alone? | Mappa con la sezione B evidenziata | 0.5 |
+| 23 | B | JESSI maps raw LiDAR scans to safe, social actions in one differentiable network | Video: spiegazione di JESSI in simulazione dall'inizio di `video_demonstration.mp4` (traiettoria, point cloud, umani stimati, spazio d'azione); teaser (`ch10/teaser.pdf`) come poster | 1.5 |
+| 24 | B | Perception estimates each human with its uncertainty, and the policy also sees the raw scan | Architettura e modulo di percezione (`ch10/journal_jessi_architecture.pdf`, `journal_jessi_perception.pdf`) (*) | 2 |
+| 25 | B | The same bounding now runs directly on the LiDAR point cloud | `ch10/action_space_bounding_summary.pdf` (*) | 1 |
+| 26 | B | Every method gets the same LiDAR, and human-aware baselines get JESSI's estimates | Scenari e setup del benchmark (`ch3/scenarios.pdf`); baseline model-based, human-aware, E2E (Cap. 10.4) | 1 |
+| 27 | B | JESSI has the highest success rate in unseen layouts, and is among the best in known ones | Grafico a barre dell'SR per Setup 1 e 2 con IC al 95% su 10 seed, dalla tabella `tab:jessi_benchmark` (da costruire) | 2 |
+| 28 | B | Removing the bounding raises obstacle collisions from 3% to 40% | Barre CR-O: JESSI-MT 3.3% contro JESSI-A1 40.3% (Setup 2); V-E2E 42.5% contro BV-E2E 5.7%; in nota il costo: più timeout | 1.5 |
+| 29 | B | Zero-shot on a TurtleBot4, JESSI completes every run and moves more smoothly than DWA | Video del robot reale + `ch10/campaign_metrics.pdf` (SC più alta, jerk più bassi, TtG più alto di DWA); 12.79 ms sul Raspberry Pi | 2 |
+| 30 | B | The same network works with other sensors, down to a depth camera on a Loomo | Sintesi della tabella del sensor agnosticism (da 50 a 500 raggi senza riaddestramento; degrada con 20 raggi e FoV di 90°) + foto Loomo (`ch10/loomo_real_world_test.jpg`) | 1 |
+| 31 | Chiusura | Safety is promoted, not guaranteed, and decisions still look only one step ahead | Limiti (Cap. 11, 12) e linea futura: predizione delle traiettorie umane e RL model-based | 1.25 |
+| 32 | Chiusura | Three things to remember | I tre messaggi del brief, con i colori delle tre sezioni, e QR code a GitHub ed email. Resta proiettata durante le domande | 1.25 |
 
-Totale: 38.5 min.
+Totale: 39.5 min.
 
 ## Backup (non contano nel tempo)
 
@@ -89,6 +90,6 @@ Totale: 38.5 min.
 
 ## Da verificare in fase 5
 
-- Video `video_demonstration.mp4`: all'inizio la spiegazione di JESSI in simulazione (slide 22), in fondo il robot reale (slide 2 e 28). Controllare che non riporti scritte sulla sede di pubblicazione. Pesa 28 MB e ha l'audio: va tagliato e compresso.
+- Video `video_demonstration.mp4`: all'inizio la spiegazione di JESSI in simulazione (slide 23), in fondo il robot reale (slide 2 e 29). Controllare che non riporti scritte sulla sede di pubblicazione. Pesa 28 MB e ha l'audio: va tagliato e compresso.
 - Figure segnate con (*): decidere con l'autore se rifarle.
 - Le fonti precise del freezing robot (slide 5) e delle quattro semplificazioni (slide 7) nel Cap. 1 e nel Cap. 8.

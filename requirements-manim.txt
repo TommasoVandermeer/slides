@@ -1,0 +1,5 @@
+# Ambiente per i video Manim (Community Edition) dei deck. Installazione dalla radice della repo:
+#   python3 -m venv .venv-manim && .venv-manim/bin/pip install -r requirements-manim.txt
+# Dipendenze di sistema (Ubuntu): ffmpeg libcairo2-dev libpango1.0-dev pkg-config python3-dev, LaTeX
+manim==0.22.1
+shapely==2.2.0

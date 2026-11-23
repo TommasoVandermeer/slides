@@ -5,3 +5,4 @@ private/
 *-export.pdf
 *-export/
 .DS_Store
+.venv-manim/

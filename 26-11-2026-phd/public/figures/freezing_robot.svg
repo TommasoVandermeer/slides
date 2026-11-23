@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" font-family="sans-serif">
+  <!-- Illustrazione concettuale del freezing robot problem (Trautman and Krause, IROS 2010) -->
+  <defs>
+    <radialGradient id="blob" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#d55e00" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#d55e00" stop-opacity="0.08"/>
+    </radialGradient>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#555"/>
+    </marker>
+  </defs>
+  <line x1="20" y1="30" x2="880" y2="30" stroke="#222" stroke-width="5"/>
+  <line x1="20" y1="330" x2="880" y2="330" stroke="#222" stroke-width="5"/>
+  <!-- regioni di moto previsto degli umani, che si sovrappongono -->
+  <ellipse cx="470" cy="90" rx="120" ry="75" fill="url(#blob)"/>
+  <ellipse cx="520" cy="185" rx="125" ry="80" fill="url(#blob)"/>
+  <ellipse cx="460" cy="275" rx="120" ry="70" fill="url(#blob)"/>
+  <!-- umani -->
+  <g fill="#8a8a8a">
+    <circle cx="520" cy="90" r="18"/><circle cx="575" cy="185" r="18"/><circle cx="510" cy="275" r="18"/>
+  </g>
+  <g stroke="#555" stroke-width="3" marker-end="url(#arr)">
+    <line x1="500" y1="90" x2="440" y2="90"/><line x1="555" y1="185" x2="495" y2="185"/><line x1="490" y1="275" x2="430" y2="275"/>
+  </g>
+  <!-- robot e percorso bloccato -->
+  <circle cx="110" cy="185" r="26" fill="#555555"/>
+  <text x="110" y="240" text-anchor="middle" font-size="24" fill="#222">robot</text>
+  <path d="M140,185 C220,185 260,180 310,182" fill="none" stroke="#555555" stroke-width="4" stroke-dasharray="10 8"/>
+  <g transform="translate(335,182)">
+    <rect x="-24" y="-24" width="48" height="48" rx="8" fill="#d55e00"/>
+    <rect x="-12" y="-4" width="24" height="8" fill="#fff"/>
+  </g>
+  <!-- goal -->
+  <polygon points="810,160 818,180 840,182 823,196 828,218 810,206 792,218 797,196 780,182 802,180" fill="#222"/>
+  <text x="810" y="250" text-anchor="middle" font-size="24" fill="#222">goal</text>
+  <text x="490" y="355" text-anchor="middle" font-size="20" fill="#555">predicted motion of the humans</text>
+</svg>
