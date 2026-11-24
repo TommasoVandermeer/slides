@@ -63,11 +63,10 @@ def sr_chart():
 
 
 def bounding_chart():
+    """Ablation di JESSI (tab:jessi_ablation): JESSI-MT contro JESSI-A1, riaddestrato senza bounding."""
     rows = [  # (etichetta, CR-O %, con bounding?)
-        ("JESSI\nwith bounding", 3.3, True),
-        ("JESSI\nwithout bounding", 40.3, False),
-        ("End-to-end\nwith bounding", 5.7, True),
-        ("End-to-end\nwithout bounding", 42.5, False),
+        ("with\nbounding", 1.4, True), ("without\nbounding", 13.6, False),
+        ("with\nbounding", 3.3, True), ("without\nbounding", 40.3, False),
     ]
     fig, ax = plt.subplots(figsize=(12, 5.4))
     xs = [0, 1, 2.6, 3.6]
@@ -76,6 +75,8 @@ def bounding_chart():
         ax.text(x, v + 1.2, f"{v:.1f}%", ha="center", fontsize=21, color=INK, fontweight="bold")
     ax.set_xticks(xs)
     ax.set_xticklabels([r[0] for r in rows], fontsize=18)
+    for x, lab in [(0.5, "Known layouts (Setup 1)"), (3.1, "Unseen layouts (Setup 2)")]:
+        ax.text(x, -0.26, lab, transform=ax.get_xaxis_transform(), ha="center", fontsize=20, color=INK)
     ax.set_ylabel("Collisions with obstacles (%)")
     ax.set_ylim(0, 50)
     ax.set_yticks([0, 10, 20, 30, 40, 50])
@@ -83,9 +84,7 @@ def bounding_chart():
     ax.set_axisbelow(True)
     ax.tick_params(axis="x", length=0)
     fig.tight_layout()
-    fig.savefig(OUT / "bounding_ablation.svg", transparent=True)
-
-
+    fig.savefig(OUT / "bounding_ablation.svg", transparent=True, bbox_inches="tight", pad_inches=0.05)
 
 def dirichlet_vs_gaussian(seed=3):
     """Illustrazione (campioni sintetici, non dati): gaussiana con clipping contro Dirichlet sul triangolo."""

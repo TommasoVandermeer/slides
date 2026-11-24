@@ -63,6 +63,15 @@
   font-weight: 600;
 }
 
+.card .by {
+  margin-top: 0.7rem;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+.card .by + .tag {
+  margin-top: 0.15rem;
+}
+
 /* Numero grande con etichetta */
 .stat {
   text-align: center;

@@ -108,28 +108,27 @@ With reinforcement learning, the robot learns the interaction from experience. O
 
 So the design effort does not disappear: it moves to the simulator and to the reward function.
 
-Transition: the best-known policies of this kind work well, but in a world that is simpler than the real one.
+Transition: but taking such a policy from simulation to a real robot raises several challenges.
 -->
 
 ---
 
-# Human-aware RL policies work well, but in an idealized world
+# Five challenges stand between a policy trained in simulation and a real robot
 
-<div class="cards" style="--n: 4">
-  <div class="card" style="--c: var(--c-jessi)"><h3>Exact human state</h3><p>Position and velocity of every person are known</p><span class="tag">removed by JESSI</span></div>
-  <div class="card" style="--c: var(--c-dirsafe)"><h3>No static obstacles</h3><p>Only people in the scene</p><span class="tag">removed by DIR-SAFE</span></div>
-  <div class="card" style="--c: var(--c-dirsafe)"><h3>No kinematic constraints</h3><p>The robot can move in any direction</p><span class="tag">removed by DIR-SAFE</span></div>
-  <div class="card" style="--c: var(--c-dirsafe)"><h3>Few discrete actions</h3><p>A small set to choose from</p><span class="tag">removed by DIR-SAFE</span></div>
+<div class="cards" style="--n: 5">
+  <div class="card" style="--c: var(--c-hm)"><h3>Simulated humans</h3><p>The policy only meets models of people</p><p class="by">addressed by</p><span class="tag">HM + reward studies</span></div>
+  <div class="card" style="--c: var(--c-dirsafe)"><h3>Kinematic constraints</h3><p>A real robot cannot move in any direction</p><p class="by">addressed by</p><span class="tag">DIR-SAFE</span></div>
+  <div class="card" style="--c: var(--c-dirsafe)"><h3>Continuous actions</h3><p>Not just a few discrete choices</p><p class="by">addressed by</p><span class="tag">DIR-SAFE</span></div>
+  <div class="card" style="--c: var(--c-dirsafe)"><h3>Static obstacles</h3><p>Walls and furniture, not only people</p><p class="by">addressed by</p><span class="tag">DIR-SAFE</span></div>
+  <div class="card" style="--c: var(--c-jessi)"><h3>Perceiving people</h3><p>Their state comes from sensors, not for free</p><p class="by">addressed by</p><span class="tag">JESSI</span></div>
 </div>
 
-<div class="cite">CADRL: Chen et al., ICRA 2017 · LSTM-RL: Everett et al., IROS 2018 · SARL: Chen et al., ICRA 2019</div>
-
 <!--
-CADRL, LSTM-RL and SARL are among the first human-aware RL policies. SARL uses attention to weigh the humans in the crowd. They work well, but they make four simplifications. The robot knows the exact position and velocity of every human. There are no static obstacles. The robot can move in any direction, without kinematic constraints. And it chooses from a small, discrete set of actions.
+The first human-aware RL policies learn social behavior in simulation, but a real robot adds several challenges, and each part of my work addresses some of them.
 
-The rest of the talk removes these simplifications. But first, we keep the idealized world and look at the simulator itself.
+First, the policy only meets simulated people, so the human motion model and the reward shape what it learns. Then, a real robot has kinematic constraints, it chooses continuous actions, and it moves among walls and furniture, not only among people: DIR-SAFE addresses these three. Finally, a real robot does not know where people are: it has to perceive them from its sensors. JESSI addresses this last one.
 
-Transition: so the first question is about the simulated humans.
+Transition: let me start from the simulated humans.
 -->
 
 ---
@@ -226,34 +225,59 @@ Transition: you can also see the difference directly in the trajectories.
 
 ---
 
-# HSFM-trained robots move closer and faster, SFM-trained robots slow down near people
+# HSFM-trained robots pass closer and arrive sooner, SFM-trained robots keep their distance
 
-<img src="/figures/sarl_over_hsfm.png" class="mx-auto h-80" alt="Trajectories of two SARL policies from the same initial conditions" />
+<SlidevVideo autoplay loop muted controls poster="/videos/sarl_episodes.jpg" printPoster="/videos/sarl_episodes.jpg" class="mx-auto h-[20rem]">
+  <source src="/videos/sarl_episodes.mp4" type="video/mp4" />
+</SlidevVideo>
 
-<p class="caption">Red circles: the robot every 3 s. Left: trained with SFM, it slows down in the center. Right: trained with HSFM</p>
+<p class="caption">One example episode · next to each run, SARL scores each of its 81 velocities and takes the best</p>
 
-<div class="cite">HM study: Van Der Meer et al., ACM THRI 2025</div>
+<div class="cite">HM study: Van Der Meer et al., ACM THRI 2025 · SARL: Chen 2019</div>
 
 <!--
-Same initial conditions, same pedestrians, two policies. The robot trained with the SFM is more conservative: it slows down when it crosses the paths of the humans in the center. The robot trained with the HSFM accepts to get closer to the humans, covers more distance in the same time and reaches the goal earlier, with a smoother path.
+Same initial conditions, same pedestrians, both moved by the HSFM, and two SARL policies: on the left trained with the SFM, on the right with the HSFM. The robot is holonomic, and the line is its path.
+
+Next to each run you see how SARL decides. At every step it scores each of its 81 discrete velocities online, by looking one step ahead, and takes the best one, outlined in black. Yellow is high value, purple is low.
+
+The robot trained with the SFM makes a wide detour around the group crossing in the center: it reaches the goal in 22 seconds, with a longer path, but it stays out of the personal space of the people 98% of the time. The robot trained with the HSFM passes closer and goes almost straight: 15.75 seconds, a shorter path, 76% space compliance.
+
+This is one example episode, chosen because it shows the trend clearly. Over many episodes the differences are smaller, but they go in the same direction: HSFM-trained policies are faster, SFM-trained policies are slightly more compliant.
 
 Transition: the human model is not the only part of the simulator that shapes the policy. The reward does too.
 -->
 
 ---
 
-# The reward also shapes behavior, and a richer reward makes the human model matter less
+# Rewarding progress to the goal helps learning, while a time penalty alone slows the robot down
 
-<img src="/figures/r0_r7_ttg_angacc.png" class="mx-auto h-76" alt="Time to goal and angular acceleration for base and complete rewards, trained with SFM and HSFM" />
+<div class="flex justify-center items-center gap-8">
+  <img src="/figures/all_rewards_metrics_hsfm.png" class="h-[21.5rem]" alt="Time to goal, path length, angular acceleration and space compliance for the eight reward functions" />
+  <div class="caption text-left w-60">
+    Terms added to the base reward R0:<br><br>
+    <table class="compact-table text-sm">
+      <tr><th></th><th>progress to goal</th><th>time penalty</th><th>rotation penalty</th></tr>
+      <tr><td>R1</td><td></td><td></td><td>✓</td></tr>
+      <tr><td>R2</td><td></td><td>✓</td><td></td></tr>
+      <tr><td>R3</td><td></td><td>✓</td><td>✓</td></tr>
+      <tr><td>R4</td><td>✓</td><td></td><td></td></tr>
+      <tr><td>R5</td><td>✓</td><td></td><td>✓</td></tr>
+      <tr><td>R6</td><td>✓</td><td>✓</td><td></td></tr>
+      <tr><td>R7</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    </table>
+  </div>
+</div>
 
-<p class="caption">R0: base reward, R7: complete reward. With R7 the SFM and HSFM bars almost coincide</p>
+<p class="caption">SARL trained with the HSFM, 15 humans in the test</p>
 
 <div class="cite">Reward study: Van Der Meer et al., Springer 2025</div>
 
 <!--
-In a second study we used a differential-drive robot and changed the reward. Each reward term does what it is designed for, but it has side effects on other metrics. For example, a penalty on rotations reduces the angular acceleration but makes the paths longer.
+In a second study we used a differential-drive robot and trained SARL with eight reward functions: the base reward, plus every combination of three extra terms. A progress term rewards getting closer to the goal, a time penalty is given at every step, and a rotation penalty is given for turning too fast.
 
-The complete reward, which combines progress to the goal, a time penalty and a rotation penalty, gives faster and smoother policies and reduces the variance of the metrics. And it reduces the effect of the human model: with the base reward the training model matters a lot, with the complete reward much less.
+Each term does what it is designed for, but with side effects. The rewards with the progress term, R4 to R7, give a lower time to goal, and surprisingly also a much lower angular acceleration: the robot steers less often. The time penalty alone, R2 and R3, gives the highest time to goal, even worse than the base reward: without a dense positive term, it cancels the reward for reaching the goal. The rotation penalty lowers the angular acceleration, but the paths get longer. Space compliance does not change much among the rewards.
+
+So a richer reward, which combines these terms, helps learning, while some terms alone do not.
 
 Transition: so what should we take from these two studies?
 -->
@@ -263,20 +287,20 @@ Transition: so what should we take from these two studies?
 # The human motion model is part of the method, not a detail of the simulator
 
 <div class="cards" style="--n: 2; --c: var(--c-hm)">
-  <div class="card"><h3>Train</h3><p>with the HSFM<br>in many scenarios<br>choosing the reward together with the human model</p></div>
+  <div class="card"><h3>Train</h3><p>with the HSFM<br>in many scenarios<br>choosing a richer reward function</p></div>
   <div class="card"><h3>Test</h3><p>with other models too (ORCA, SFM)<br>in new scenarios, at several crowd densities<br>on both navigation and social metrics</p></div>
 </div>
 
 <div class="cite">HM study: Van Der Meer et al., ACM THRI 2025 · Reward study: Van Der Meer et al., Springer 2025</div>
 
 <!--
-This is the first message of the talk. The model used to simulate humans in training shapes the policy much more than the model used in testing. We found this in two different setups, so it is our most consistent result. The reward modulates the effect, so the two have to be chosen together.
+This is the first message of the talk. The model used to simulate humans in training shapes the policy much more than the model used in testing. We found this in two different setups, so it is our most consistent result. And a richer reward, with a progress term, helps the policy learn.
 
 In practice: train with the HSFM in many scenarios, test with other models such as ORCA and the SFM, also in new scenarios, at several crowd densities, and always look at both navigation and social metrics.
 
 One more practical note: we moved from a Python simulator to social-jym, our JAX simulator. A training run went from about a day to a few hours, although the two setups are not identical. This made the next studies possible.
 
-Transition: so far the world was idealized. Now we start to remove the simplifications.
+Transition: so far the world was idealized. Now we address the challenges of a real robot.
 -->
 
 ---
@@ -392,7 +416,25 @@ Here DIR-SAFE follows waypoints from an A-star planner in a large map, with more
 
 This is the second message: safety is built into the actions, not only rewarded.
 
-Transition: but DIR-SAFE still knows exactly where every person is. A real robot does not.
+Transition: let me sum up what we learned from DIR-SAFE.
+-->
+
+---
+
+# DIR-SAFE lessons: put the constraints in the action space, and keep them light
+
+<div class="cards" style="--c: var(--c-dirsafe)">
+  <div class="card"><h3>Feasible by construction</h3><p>A Dirichlet over the action triangle: no clipping, no infeasible command</p></div>
+  <div class="card"><h3>Bound with geometry</h3><p>A few box checks per step shrink the actions near obstacles</p></div>
+  <div class="card"><h3>No online optimization</h3><p>One forward pass of the actor, about 1 ms, and no retuning on a new map</p></div>
+</div>
+
+<div class="cite">DIR-SAFE: Van Der Meer et al., ICAR 2025</div>
+
+<!--
+Three lessons from DIR-SAFE. First, the constraints of the robot are best placed in the action distribution itself: with the Dirichlet over the triangle, every action is feasible, and there is no clipping. Second, a light geometric check is enough to restrict the actions near obstacles: it only needs a local map and a few box intersections. It is conservative, so it excludes some safe actions, and it promotes safety without guaranteeing it. Third, the actor-critic scheme removes the online optimization and the onboard simulator of SARL: one forward pass, about one millisecond, and the same policy worked on a large new map without retuning, while DWA needed careful hand-tuning.
+
+Transition: but DIR-SAFE still knows exactly where every person is, and it needs a map. A real robot has neither.
 -->
 
 ---
@@ -404,7 +446,24 @@ layout: section
 <RoadMap :current="4" />
 
 <!--
-Now we remove the last simplification. The robot has no access to the state of the humans: it only has the scans of a 2D LiDAR, and it must still be feasible, safe and social.
+The last challenge: perceiving people. The robot has only a 2D LiDAR, and it must still be feasible, safe and social.
+
+Transition: first, what exactly is missing in DIR-SAFE.
+-->
+
+---
+
+# DIR-SAFE still needs the exact state of every person and a map of the obstacles
+
+<div class="cards" style="--n: 2">
+  <div class="card" style="--c: var(--c-dirsafe)"><h3>What DIR-SAFE assumes</h3><p>The exact position and velocity of every person<br>A map of the static obstacles</p></div>
+  <div class="card" style="--c: var(--c-jessi)"><h3>What a real robot has</h3><p>A 2D LiDAR: points without labels, with noise and occlusions<br>No map of what is around it</p></div>
+</div>
+
+<div class="cite">DIR-SAFE: Van Der Meer et al., ICAR 2025</div>
+
+<!--
+DIR-SAFE takes the position and velocity of every person as input, and it computes the bounding on a map of the obstacles. In simulation this is easy. On a real robot, nobody gives you the state of the humans: you have a LiDAR, which returns points, without saying which ones belong to a person, with noise and occlusions. So we need a policy that works from the scans.
 
 Transition: this is JESSI.
 -->
@@ -413,40 +472,41 @@ Transition: this is JESSI.
 
 # JESSI maps raw LiDAR scans to safe, social actions in one differentiable network
 
-<SlidevVideo autoplay loop muted controls poster="/videos/jessi_sim.jpg" printPoster="/videos/jessi_sim.jpg" class="mx-auto h-80">
-  <source src="/videos/jessi_sim.mp4" type="video/mp4" />
-</SlidevVideo>
+<img src="/figures/teaser.png" class="mx-auto h-[20rem]" alt="LiDAR scans feeding a perception module and an actor-critic, trained end to end" />
 
-<p class="caption">Left: scans and estimated humans · Right: action space after bounding · 2×</p>
+<p class="caption">Perception: each human's position and velocity, with uncertainty and a score · Actor-critic: attention, plus the raw scan</p>
 
 <div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
 
 <!--
-JESSI takes a short stack of LiDAR scans. A perception module estimates where the humans are and how they move. An actor-critic uses these estimates to choose the action. Everything is one network, and it is differentiable end to end.
+JESSI takes a short stack of LiDAR scans and is one network, differentiable end to end.
 
-In the video, on the left you see the scene and the scans, in the middle the point cloud and the humans estimated by the network, on the right the action space, shrunk by the bounding.
-
-Transition: let me open the two modules.
--->
-
----
-
-# Perception estimates each human with its uncertainty, and the policy also sees the raw scan
-
-<img src="/figures/journal_jessi_architecture.png" class="mx-auto w-4/5 mt-10" alt="Perception module feeding an actor-critic, with the latest scan in parallel" />
-
-<p class="caption mt-6">X(k): stack of LiDAR scans · H(k): estimated humans, with covariances · O(k): latest raw scan</p>
-
-<div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
-
-<!--
-The perception module looks at the stack of scans and outputs, for each human, a position and a velocity with their covariances, and a confidence score. This layer is readable: you can look at what the robot believes about the people around it. This makes the policy partly interpretable.
+The perception module looks at the stack of scans and outputs, for each human, a position and a velocity with their covariances, and a confidence score. This layer is readable: you can look at what the robot believes about the people around it, so the policy is partly interpretable.
 
 The actor-critic uses attention over these estimates, like SARL. But it also receives the latest raw scan, in parallel. This gives the policy a geometric view of the scene that does not depend on recognizing people, which helps when the perception makes mistakes.
 
 Because everything is differentiable, perception and policy can be trained together.
 
-Transition: the safety part comes from DIR-SAFE.
+Transition: let me show it running.
+-->
+
+
+---
+
+# In simulation, JESSI estimates the people from the scans and keeps only the actions within the bounds
+
+<SlidevVideo autoplay loop muted controls poster="/videos/jessi_sim.jpg" printPoster="/videos/jessi_sim.jpg" class="mx-auto h-80">
+  <source src="/videos/jessi_sim.mp4" type="video/mp4" />
+</SlidevVideo>
+
+<p class="caption">Left: scans and estimated humans · Right: action space after bounding · then other scenarios and LiDAR resolutions · 2×</p>
+
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
+
+<!--
+Here is JESSI in simulation. On the left you see the scene and the scans, in the middle the point cloud and the humans estimated by the network, with their positions and velocities. On the right is the action space: in red what the robot could do, in green what is left after the bounding. The video then shows other scenarios, and the same network with a denser and a sparser LiDAR.
+
+Transition: the bounding is the same as in DIR-SAFE, but now on the LiDAR points.
 -->
 
 ---
@@ -466,6 +526,28 @@ Transition: the safety part comes from DIR-SAFE.
 
 <!--
 In DIR-SAFE the bounding used a map of the obstacles. In JESSI it uses the LiDAR points directly. Same idea: we look at the positions the robot could reach in the next step, and we shrink the triangle when LiDAR points fall inside them. The Dirichlet output stays the same, so every action is feasible and stays within the bounds.
+
+Transition: the last part of the method is how we train it.
+-->
+
+---
+
+# Three training paradigms decide how much the reward shapes the perception
+
+<img src="/figures/journal_jessi_training_paradigms.png" class="mx-auto w-full mt-8" alt="The three training paradigms of JESSI" />
+
+<div class="cards" style="--c: var(--c-jessi)">
+  <div class="card"><h3>PO · policy only</h3><p>Perception frozen after pre-training</p></div>
+  <div class="card"><h3>MD · modular</h3><p>Perception trained only on its own loss</p></div>
+  <div class="card"><h3>MT · multi-task</h3><p>Reward and perception losses train the whole network</p></div>
+</div>
+
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026 · PPO: Schulman et al., 2017</div>
+
+<!--
+Training has three stages. We pre-train the perception module with supervision, on simulated scans where we know where the humans are. Then we initialize the actor-critic by imitation, with DIR-SAFE as the expert. Finally, we train everything with PPO.
+
+In this last stage we compared three paradigms. In the policy-only paradigm the perception is frozen. In the modular one it keeps learning, but only from its own loss: the reward does not reach it. In the multi-task one, the reward and the perception loss both flow through the whole network, so the perception learns what matters for the task.
 
 Transition: we then compared JESSI with many baselines, in a fair setting.
 -->
@@ -501,6 +583,8 @@ Transition: here is the success rate.
 <!--
 In the scenarios seen in training, the three JESSI variants and the bounded end-to-end baseline have the highest success rate. In the unseen scenarios of Setup 2, JESSI trained with the multi-task paradigm reaches 89.6 percent. DIR-SAFE, with JESSI's perception, is in the same range. SARL-star reaches 82.7, the bounded end-to-end policy 78.6, and the model-based planners at most 77.7. The space compliance of JESSI is comparable to that of the human-aware policies.
 
+We report the multi-task paradigm, which is slightly better in unseen layouts; we did not observe large differences among the three paradigms.
+
 Note the confidence intervals: across seeds, the variability is much larger in unseen scenarios. So it is important to train several seeds and report them together.
 
 Transition: which part of JESSI makes the difference on obstacles?
@@ -512,12 +596,12 @@ Transition: which part of JESSI makes the difference on obstacles?
 
 <img src="/figures/bounding_ablation.svg" class="mx-auto h-80" alt="Collisions with obstacles with and without the action space bounding" />
 
-<p class="caption">Unseen layouts (Setup 2). Green: with Dirichlet actions and bounding · Red: without</p>
+<p class="caption">Ablation: JESSI retrained without the action space bounding · Green: with · Red: without</p>
 
 <div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
 
 <!--
-This is the clearest evidence for the second message. If we retrain JESSI without the bounding, collisions with obstacles in the unseen scenarios go from 3.3 to 40.3 percent. And if we add the Dirichlet output and the bounding to a plain end-to-end policy, its collisions go from 42.5 to 5.7 percent.
+This is the clearest evidence for the second message. We tested an ablation: the same JESSI, retrained without the bounding. In the known layouts, collisions with obstacles go from 1.4 to 13.6 percent. In the unseen ones, from 3.3 to 40.3 percent.
 
 There is a cost: the bounding is conservative, so the robot times out more often and its space compliance drops a little. But the trade is clearly worth it.
 
@@ -573,9 +657,27 @@ On the real TurtleBot we used two hundred beams. We also ran it on a Loomo, whic
 
 This is the third message: social navigation works from a 2D LiDAR alone.
 
-Transition: before closing, what is still missing.
+Transition: let me sum up what we learned from JESSI.
 -->
 
+---
+
+# JESSI lessons: bound the actions, model the humans, keep the raw geometry
+
+<div class="cards" style="--n: 2; --c: var(--c-jessi)">
+  <div class="card"><h3>Bounding matters most</h3><p>Clearest effect on obstacle collisions, at the cost of some timeouts</p></div>
+  <div class="card"><h3>Model the humans explicitly</h3><p>Estimating each person, with its uncertainty, beats end-to-end policies in unseen layouts</p></div>
+  <div class="card"><h3>Keep the raw scan</h3><p>A geometric view that does not depend on recognizing people</p></div>
+  <div class="card"><h3>Design for the sensor</h3><p>Sensor-agnostic inputs and noisy simulated scans helped the zero-shot transfer</p></div>
+</div>
+
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
+
+<!--
+Four lessons from JESSI. First, the bounding is the component with the clearest effect on collisions with obstacles. It has a cost: more timeouts, and slightly lower space compliance. Second, it pays to model the humans explicitly. In the unseen layouts JESSI reaches 89.6 percent success, against 78.6 for an end-to-end policy with the same bounding that sees people only as points of the scan, and 54.7 without the bounding. And if we remove the uncertainty of the estimates, the success rate drops to 84.9. Third, restricting the actions is not enough: the policy also needs a geometric view of the scene that does not depend on recognizing people. When obstacles look like standing people, SARL and CADRL, which only see the estimated humans, collide in about forty and fifty-five percent of the episodes; JESSI, which also sees the raw scan, does not. Fourth, the transfer to the real robot was made possible by the sensor-agnostic architecture, and it probably benefited from the noise and dropouts we added to the simulated scans.
+
+Transition: before closing, what is still missing.
+-->
 ---
 
 # Safety is promoted, not guaranteed, and decisions still look only one step ahead
@@ -705,16 +807,18 @@ Base reward, progress to goal, time penalty, rotation penalty.
 
 ---
 
-# JESSI is trained with imitation learning, then PPO, with three paradigms
+# JESSI is trained in three stages: supervised perception, imitation, then PPO
 
-<img src="/figures/journal_jessi_training_paradigms.png" class="mx-auto w-full mt-10" alt="The three training paradigms of JESSI" />
-
-<p class="caption mt-6">Imitation learning first, then PPO. Paradigms: PO, MD, MT (multi-task)</p>
+<div class="cards" style="--c: var(--c-jessi)">
+  <div class="card"><h3>1 · Perception</h3><p>Supervised pre-training on simulated scans with known humans</p></div>
+  <div class="card"><h3>2 · Imitation</h3><p>Actor-critic initialized from DIR-SAFE demonstrations</p></div>
+  <div class="card"><h3>3 · PPO</h3><p>End-to-end RL with a curriculum on the hardest scenarios; perception loss kept as auxiliary</p></div>
+</div>
 
 <div class="cite">JESSI: Van Der Meer et al., IROS 2026 · PPO: Schulman et al., 2017</div>
 
 <!--
-Training pipeline and the three paradigms.
+Training pipeline of JESSI.
 -->
 
 ---
@@ -887,4 +991,24 @@ The static figures of the action space bounding, with the same geometry as the v
 
 <!--
 Static version of the two videos on the Gaussian and the Dirichlet policy.
+-->
+
+---
+
+# Perception estimates each human with its uncertainty, and the policy also sees the raw scan
+
+<img src="/figures/journal_jessi_architecture.png" class="mx-auto w-4/5 mt-10" alt="Perception module feeding an actor-critic, with the latest scan in parallel" />
+
+<p class="caption mt-6">X(k): stack of LiDAR scans · H(k): estimated humans, with covariances · O(k): latest raw scan</p>
+
+<div class="cite">JESSI: Van Der Meer et al., IROS 2026</div>
+
+<!--
+The perception module looks at the stack of scans and outputs, for each human, a position and a velocity with their covariances, and a confidence score. This layer is readable: you can look at what the robot believes about the people around it. This makes the policy partly interpretable.
+
+The actor-critic uses attention over these estimates, like SARL. But it also receives the latest raw scan, in parallel. This gives the policy a geometric view of the scene that does not depend on recognizing people, which helps when the perception makes mistakes.
+
+Because everything is differentiable, perception and policy can be trained together.
+
+Backup: the detailed architecture, if someone asks about the inputs of the two modules.
 -->
